@@ -1,0 +1,112 @@
+.sidebar {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 100%;
+    max-width: 50px;
+    height: 100vh;
+    border-right: 1px solid #ddd;
+    background-color: #ffffff;
+    overflow: hidden;
+    padding: 15px 5px;
+    transition: max-width 0.3s ease;
+
+    a {
+        span {
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+    }
+}
+
+.activeSidebar {
+    max-width: 230px;
+    padding: 15px 10px;
+
+    a {
+        span {
+            opacity: 1;
+        }
+    }
+}
+
+.button {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 16px;
+    background-color: transparent;
+    color: #171717;
+    border-radius: 8px;
+    padding: 10px 10px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+
+    span {
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+
+}
+
+.activeButton {
+    span {
+        opacity: 1;
+    }
+}
+
+.button:hover {
+    background-color: #cfdbe7;
+    color: #1C274C;
+}
+
+.menu {
+    position: relative;
+    align-items: center;
+    width: 20px;
+    height: 12px;
+    margin-bottom: 20px;
+    margin-left: 10px;
+    cursor: pointer;
+    opacity: 1;
+    transition: opacity 0.3s ease;
+
+    span {
+        position: absolute;
+        top: 50%;
+        right: 0;
+        width: 100%;
+        border: 1px solid #1C274C;
+        opacity: 1;
+        transition: 0.2s ease;
+    }
+    span:first-child {
+        top: 0;
+        right: 0;
+    }
+    span:last-child {
+        top: 100%;
+        right: 0;
+    }
+}
+
+.menu:hover {
+    opacity: 0.7;
+}
+
+.activeMenu {
+    span {
+        opacity: 0;
+    }
+    span:first-child {
+        top: 50%;
+        opacity: 1;
+        transform: rotate(45deg);
+    }
+    span:last-child {
+        top: 48%;
+        opacity: 1;
+        transform: rotate(-45deg);
+    }
+}

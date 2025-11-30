@@ -1,0 +1,96 @@
+.backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.35);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+}
+
+.modal {
+    background: #fff;
+    border-radius: 16px;
+    padding: 16px 20px;
+    width: 360px;
+    max-width: calc(100% - 32px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+}
+
+.header h2 {
+    font-size: 16px;
+    margin: 0;
+}
+
+.closeBtn {
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-size: 18px;
+}
+
+.block {
+    margin-bottom: 8px;
+}
+
+.label {
+    font-size: 11px;
+    color: #777;
+    margin-bottom: 2px;
+}
+
+.value {
+    font-size: 13px;
+    color: #111;
+}
+
+.footer {
+    margin-top: 14px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+}
+
+.primaryBtn {
+    background: #d74141;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 6px 12px;
+    font-size: 13px;
+    cursor: pointer;
+}
+
+.primaryBtn:hover {
+    background: #c43131;
+}
+
+.secondaryBtn {
+    background: #f3f3f3;
+    color: #333;
+    border: none;
+    border-radius: 6px;
+    padding: 6px 12px;
+    font-size: 13px;
+    cursor: pointer;
+}
+
+.secondaryBtn:hover {
+    background: #e1e1e1;
+}
+
+.disabledBtn {
+    background: #eeeeee;
+    color: #999;
+    border: none;
+    border-radius: 6px;
+    padding: 6px 12px;
+    font-size: 13px;
+}
