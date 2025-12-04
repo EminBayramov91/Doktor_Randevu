@@ -1,6 +1,62 @@
 .sidebar {
-    padding: 16px;
+    padding: 10px;
     border-right: 1px solid #e5e5e5;
     background: #fafafa;
     box-sizing: border-box;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    transition: width 0.25s ease;
+    overflow: hidden;
+}
+
+.sidebarOpen {
+    width: 260px;
+}
+
+.sidebarClosed {
+    width: 45px;
+    padding-inline: 4px;
+
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.toggleBtn {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 1px solid #d0d0d0;
+    background: #ffffff;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+}
+
+.toggleBtn:hover {
+    background: #f0f0f0;
+}
+
+.chevron {
+    font-size: 14px;
+    line-height: 1;
+    color: #1c274c;
+}
+
+.title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #1c274c;
+}
+
+
+.calendarBox {
+    margin-top: 4px;
 }

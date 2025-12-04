@@ -1,9 +1,9 @@
-export const metadata = {
-    title: 'Clients',
-}
-export default function Page() {
+import ClientsPageClient from "@/components/clientsPageClient/ClientsPageClient";
 
-    return (
-        <div>Clients</div>
-    )
+export const metadata = {
+    title: "Müştəri siyahısı",
+};
+
+export default function Page() {
+    return <ClientsPageClient />;
 }

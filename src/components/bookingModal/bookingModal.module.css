@@ -103,3 +103,36 @@
 .secondaryBtn:hover {
     background: #e1e1e1;
 }
+
+.error {
+    margin-top: 8px;
+    color: #d32f2f;
+    font-size: 12px;
+}
+
+.infoBox {
+    margin-top: 6px;
+    font-size: 12px;
+    background-color: #e8f4ff;
+    border: 1px solid #90caf9;
+    border-radius: 4px;
+    padding: 6px 8px;
+    color: #0d47a1;
+}
+
+.infoBox strong {
+    font-weight: 600;
+}
+
+.inlineFields {
+    display: flex;
+    gap: 8px;
+}
+
+.inlineFields input[type="date"],
+.inlineFields input[type="time"] {
+    flex: 1;
+    padding: 6px 8px;
+    font-size: 14px;
+}
+

@@ -1,0 +1,181 @@
+.page {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 16px 20px;
+    height: 100%;
+    box-sizing: border-box;
+}
+
+.headerRow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.title {
+    font-size: 20px;
+    font-weight: 600;
+    margin: 0;
+}
+
+.headerActions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.searchInput {
+    min-width: 220px;
+    padding: 6px 10px;
+    border-radius: 8px;
+    border: 1px solid #d0d0d0;
+    font-size: 14px;
+}
+
+.searchInput:focus {
+    outline: none;
+    border-color: #1c274c;
+}
+
+.addBtn {
+    border: none;
+    border-radius: 8px;
+    padding: 8px 14px;
+    background-color: #1c274c;
+    color: #fff;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.addBtn:hover {
+    background-color: #121a35;
+}
+
+.content {
+    display: grid;
+    grid-template-columns: minmax(0, 2.2fr) minmax(0, 1.2fr);
+    gap: 16px;
+    height: calc(100vh - 120px);
+}
+
+.listPane {
+    border-radius: 12px;
+    border: 1px solid #e0e0e0;
+    background-color: #fff;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.detailPane {
+    border-radius: 12px;
+    border: 1px solid #e0e0e0;
+    background-color: #fff;
+    padding: 12px 14px;
+    overflow-y: auto;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+}
+
+.table thead {
+    background-color: #f7f7f7;
+}
+
+.table th,
+.table td {
+    padding: 8px 10px;
+    border-bottom: 1px solid #eee;
+    text-align: left;
+}
+
+.table th {
+    font-weight: 600;
+    color: #555;
+}
+
+.row {
+    cursor: pointer;
+}
+
+.row:hover {
+    background-color: #f5f7fb;
+}
+
+.rowSelected {
+    background-color: #e6ebff;
+}
+
+.emptyCell {
+    text-align: center;
+    padding: 16px;
+    color: #888;
+}
+
+.actionsCell {
+    white-space: nowrap;
+}
+
+.linkBtn {
+    border: none;
+    background: none;
+    color: #1c274c;
+    font-size: 12px;
+    cursor: pointer;
+    padding: 0 4px;
+}
+
+.linkBtn:hover {
+    text-decoration: underline;
+}
+
+.linkBtnDanger {
+    border: none;
+    background: none;
+    color: #c62828;
+    font-size: 12px;
+    cursor: pointer;
+    padding: 0 4px;
+}
+
+.linkBtnDanger:hover {
+    text-decoration: underline;
+}
+
+.detailTitle {
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0 0 8px;
+}
+
+.detailBlock {
+    margin-bottom: 8px;
+}
+
+.detailLabel {
+    font-size: 11px;
+    color: #777;
+    margin-bottom: 2px;
+}
+
+.detailValue {
+    font-size: 13px;
+    color: #222;
+}
+
+.detailHint {
+    margin-top: 12px;
+    font-size: 11px;
+    color: #999;
+}
+
+.detailEmpty {
+    font-size: 13px;
+    color: #777;
+    margin-top: 8px;
+}

@@ -178,27 +178,17 @@
     gap: 8px;
 }
 
-.todayBtn {
-    border: none;
-    background: none;
-    cursor: pointer;
-    font-size: 14px;
-    color: #666;
-}
-
-.todayBtn:hover {
-    color: #000;
-}
-
 
 .viewDropdown {
     position: relative;
 }
 
-.viewToggle {
+.viewToggle,
+.todayBtn {
     border-radius: 6px;
     border: 1px solid #d0d0d0;
     background: #f7f7f7;
+    color: #000000;
     padding: 4px 10px;
     font-size: 12px;
     cursor: pointer;
@@ -207,7 +197,8 @@
     gap: 4px;
 }
 
-.viewToggle:hover {
+.viewToggle:hover,
+.todayBtn:hover {
     background: #eaeaea;
 }
 
@@ -238,11 +229,16 @@
 }
 
 .viewItem:hover {
-    background: #f0f0f0;
-    color: #1c274c;
+    background: #283767;
+    color: #f0f0f0;
 }
 
 .viewItemActive {
     background: #1c274c;
     color: #fff;
 }
+
+.serviceDropdown {
+    position: relative;
+}
+

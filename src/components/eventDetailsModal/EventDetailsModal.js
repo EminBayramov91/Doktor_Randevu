@@ -3,11 +3,25 @@
 import styles from "./eventDetailsModal.module.css";
 import { format } from "date-fns";
 
-export default function EventDetailsModal({ event, onClose, onDelete }) {
+export default function EventDetailsModal({
+                                              event,
+                                              onClose,
+                                              onCancel,
+                                              onEdit,
+                                          }) {
     if (!event) return null;
 
     const startStr = format(event.start, "dd.MM.yyyy HH:mm");
     const endStr = format(event.end, "HH:mm");
+
+    const statusLabel =
+        event.status === "cancelled"
+            ? "Ləğv edilib"
+            : event.type === "block"
+                ? "Blok vaxtı"
+                : "Aktiv";
+
+    const typeLabel = event.type === "block" ? "Blok vaxtı" : "Randevu";
 
     return (
         <div className={styles.backdrop}>
@@ -20,8 +34,20 @@ export default function EventDetailsModal({ event, onClose, onDelete }) {
                 </div>
 
                 <div className={styles.block}>
+                    <div className={styles.label}>Tip</div>
+                    <div className={styles.value}>{typeLabel}</div>
+                </div>
+
+                <div className={styles.block}>
+                    <div className={styles.label}>Status</div>
+                    <div className={styles.value}>{statusLabel}</div>
+                </div>
+
+                <div className={styles.block}>
                     <div className={styles.label}>Pasiyent</div>
-                    <div className={styles.value}>{event.patientName || "-"}</div>
+                    <div className={styles.value}>
+                        {event.patientName || "-"}
+                    </div>
                 </div>
 
                 <div className={styles.block}>
@@ -31,7 +57,9 @@ export default function EventDetailsModal({ event, onClose, onDelete }) {
 
                 <div className={styles.block}>
                     <div className={styles.label}>Xidmət</div>
-                    <div className={styles.value}>{event.service || "-"}</div>
+                    <div className={styles.value}>
+                        {event.serviceName || event.service || "-"}
+                    </div>
                 </div>
 
                 <div className={styles.block}>
@@ -53,13 +81,17 @@ export default function EventDetailsModal({ event, onClose, onDelete }) {
                     <button
                         type="button"
                         className={styles.primaryBtn}
-                        onClick={() => onDelete && onDelete(event.id)}
+                        onClick={() => onEdit && onEdit(event)}
                     >
-                        Sil
+                        Dəyiş
                     </button>
 
-                    <button type="button" className={styles.disabledBtn} disabled>
-                        Edit (soon)
+                    <button
+                        type="button"
+                        className={styles.dangerBtn}
+                        onClick={() => onCancel && onCancel(event.id)}
+                    >
+                        Ləğv et
                     </button>
                 </div>
             </div>

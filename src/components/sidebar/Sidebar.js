@@ -1,38 +1,70 @@
 import styles from "./sidebar.module.css";
 import DashboardLink from "@/components/dashboardLink/DashboardLink";
 import Image from "next/image";
-import {useState} from "react";
-
+import { useState } from "react";
+import { useDispatch } from "react-redux";
+import { useRouter } from "next/navigation";
+import { logOut } from "@/store/authSlice";
 
 const links = [
-    { href: "/dashboard", label: "Dashboard", icon: "/dashboardIcon.svg", },
-    { href: "/dashboard/calendar", label: "Calendar", icon: "/calendarIcon.svg",},
-    { href: "/dashboard/clients", label: "Müştəri siyahısı", icon: "/clientsIcon.svg",},
-    { href: "/dashboard/profile", label: "Profil", icon: "/profileIcon.svg",},
-]
-
+    { href: "/dashboard", label: "Dashboard", icon: "/dashboardIcon.svg" },
+    { href: "/dashboard/calendar", label: "Calendar", icon: "/calendarIcon.svg" },
+    { href: "/dashboard/clients", label: "Müştəri siyahısı", icon: "/clientsIcon.svg" },
+    { href: "/dashboard/profile", label: "Profil", icon: "/profileIcon.svg" },
+];
 
 export default function Sidebar() {
     const [isActive, setIsActive] = useState(true);
+    const dispatch = useDispatch();
+    const router = useRouter();
+
     const menuHandler = () => {
-        setIsActive(prev => !prev)
-    }
+        setIsActive((prev) => !prev);
+    };
+
+    const handleLogout = () => {
+        dispatch(logOut());
+        if (typeof window !== "undefined") {
+            localStorage.removeItem("dr_token");
+            localStorage.removeItem("dr_user");
+        }
+        router.replace("/login");
+    };
 
     return (
-        <aside className={`${styles.sidebar} ${isActive ? styles.activeSidebar : ""}`}>
+        <aside
+            className={`${styles.sidebar} ${
+                isActive ? styles.activeSidebar : ""
+            }`}
+        >
             <div>
-                <div className={`${styles.menu} ${isActive ? styles.activeMenu : ""}`} onClick={menuHandler}>
+                <div
+                    className={`${styles.menu} ${
+                        isActive ? styles.activeMenu : ""
+                    }`}
+                    onClick={menuHandler}
+                >
                     <span></span>
                     <span></span>
                     <span></span>
                 </div>
                 <nav>
-                    {links.map(link => (
-                        <DashboardLink key={link.href} href={link.href} label={link.label} icon={link.icon}/>
+                    {links.map((link) => (
+                        <DashboardLink
+                            key={link.href}
+                            href={link.href}
+                            label={link.label}
+                            icon={link.icon}
+                        />
                     ))}
                 </nav>
             </div>
-            <button className={`${styles.button} ${isActive ? styles.activeButton : ""}`}>
+            <button
+                className={`${styles.button} ${
+                    isActive ? styles.activeButton : ""
+                }`}
+                onClick={handleLogout}
+            >
                 <Image
                     src="/exitIcon.svg"
                     alt="Exit icon"
@@ -42,5 +74,5 @@ export default function Sidebar() {
                 <span>Çıxış</span>
             </button>
         </aside>
-    )
+    );
 }

@@ -12,6 +12,7 @@ import {
     isSameDay,
     isSameMonth,
 } from "date-fns";
+import { az as azLocale } from "date-fns/locale";
 import styles from "./miniCalendar.module.css";
 
 export default function MiniCalendar({ selectedDate, onSelectDate }) {
@@ -86,8 +87,9 @@ export default function MiniCalendar({ selectedDate, onSelectDate }) {
                     ‹
                 </button>
                 <span className={styles.monthLabel}>
-          {formatDate(monthDate, "MMMM yyyy")}
-        </span>
+                    {formatDate(monthDate, "MMMM yyyy", {locale: azLocale})}
+                </span>
+
                 <button
                     type="button"
                     className={styles.monthNav}
@@ -98,12 +100,11 @@ export default function MiniCalendar({ selectedDate, onSelectDate }) {
             </div>
 
             <div className={styles.weekDays}>
-                {["M", "T", "W", "T", "F", "S", "S"].map((d, i) => (
-                    <span key={i} className={styles.weekDay}>
-            {d}
-          </span>
+                {["B.e", "Ç.a", "Ç.", "C.a", "C.", "Ş.", "B."].map((d, i) => (
+                    <span key={i} className={styles.weekDay}>{d}</span>
                 ))}
             </div>
+
 
             <div className={styles.monthGrid}>{renderMonthGrid()}</div>
         </div>
