@@ -6,12 +6,8 @@ import CalendarSidebar from "@/components/calendarSidebar/CalendarSidebar";
 import CalendarWrapper from "@/components/calendarWrapper/CalendarWrapper";
 import BookingModal from "@/components/bookingModal/BookingModal";
 import EventDetailsModal from "@/components/eventDetailsModal/EventDetailsModal";
+import { SERVICES } from "@/config/services";
 
-const MOCK_SERVICES = [
-    { id: "exam", name: "Müayinə" },
-    { id: "usm", name: "USM" },
-    { id: "consult", name: "Konsultasiya" },
-];
 
 const WORKING_DAY = {
     startHour: 7,
@@ -249,7 +245,7 @@ export default function CalendarPageClient() {
                 onViewChange={handleCalendarViewChange}
                 onSelectSlot={handleSelectSlot}
                 onSelectEvent={handleSelectEvent}
-                services={MOCK_SERVICES}
+                services={SERVICES}
                 serviceFilter={serviceFilter}
                 onServiceFilterChange={setServiceFilter}
             />
@@ -259,7 +255,7 @@ export default function CalendarPageClient() {
                     slot={bookingSlot}
                     mode={eventForEdit ? "edit" : "create"}
                     initialEvent={eventForEdit}
-                    services={MOCK_SERVICES}
+                    services={SERVICES}
                     existingClients={existingClients}
                     errorMessage={bookingError}
                     onClose={closeBookingModal}

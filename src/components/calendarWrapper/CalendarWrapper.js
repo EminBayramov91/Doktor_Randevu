@@ -6,6 +6,7 @@ import { az } from "date-fns/locale";
 import { format, getDay, parse, startOfWeek } from "date-fns";
 import TimeSlotWrapper from "@/components/timeSlotWrapper/TimeSLotWrapper";
 import CalendarToolbar from "@/components/calendarToolbar/CalendarToolbar";
+import { SERVICES } from "@/config/services"
 
 const locales = { az };
 
@@ -25,6 +26,11 @@ const formats = {
 };
 
 
+const serviceColorMap = SERVICES.reduce((acc, s) => {
+    acc[s.id] = s.color;
+    return acc;
+}, {});
+
 function eventStyleGetter(event) {
     let backgroundColor = "#1c274c";
     let opacity = 1;
@@ -32,9 +38,10 @@ function eventStyleGetter(event) {
     if (event.type === "block") {
         backgroundColor = "#9e9e9e";
     } else {
-        if (event.durationMinutes === 15) backgroundColor = "#4caf50";
-        else if (event.durationMinutes === 30) backgroundColor = "#2196f3";
-        else if (event.durationMinutes === 60) backgroundColor = "#ff9800";
+        backgroundColor =
+            event.color ||
+            (event.serviceId && serviceColorMap[event.serviceId]) ||
+            "#1c274c";
     }
 
     if (event.status === "cancelled") {

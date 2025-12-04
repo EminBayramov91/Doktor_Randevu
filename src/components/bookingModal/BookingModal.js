@@ -1,12 +1,14 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import {useEffect, useMemo, useState} from "react";
+import {format} from "date-fns";
+import {az as azLocale} from "date-fns/locale";
 import styles from "./bookingModal.module.css";
-import { format } from "date-fns";
+import NewClientModal from "@/components/newClientModal/NewClientModal";
 
 export default function BookingModal({
                                          slot,
-                                         mode = "create",              // "create" | "edit"
+                                         mode = "create",
                                          initialEvent = null,
                                          services = [],
                                          existingClients = [],
@@ -17,115 +19,146 @@ export default function BookingModal({
     const isEdit = mode === "edit";
     const isOpen = !!(slot || initialEvent);
 
-    const baseStart = useMemo(() => {
+    const baseDate = useMemo(() => {
         if (isEdit && initialEvent?.start) return new Date(initialEvent.start);
         if (slot?.start) return new Date(slot.start);
         return new Date();
     }, [isEdit, initialEvent, slot]);
 
-    const [fullName, setFullName] = useState(initialEvent?.patientName || "");
-    const [phone, setPhone] = useState(initialEvent?.phone || "");
-    const defaultServiceId =
-        initialEvent?.serviceId || (services[0] && services[0].id) || "";
+    const defaultServiceId = initialEvent?.serviceId || "";
+
+
     const [serviceId, setServiceId] = useState(defaultServiceId);
-    const [duration, setDuration] = useState(
-        initialEvent?.durationMinutes || 15
+    const [serviceMenuOpen, setServiceMenuOpen] = useState(false);
+
+    const selectedService = useMemo(
+        () => services.find((s) => s.id === serviceId) || null,
+        [services, serviceId]
     );
 
-    const [localError, setLocalError] = useState("");
-    const [matchedClient, setMatchedClient] = useState(null);
+    const durationMinutes =
+        selectedService?.durationMinutes ??
+        selectedService?.duration ??
+        initialEvent?.durationMinutes ??
+        15;
 
-    const [startDateStr, setStartDateStr] = useState("");
     const [startTimeStr, setStartTimeStr] = useState("");
 
     useEffect(() => {
-        const dateStr = format(baseStart, "yyyy-MM-dd");
-        const timeStr = format(baseStart, "HH:mm");
-        setStartDateStr(dateStr);
-        setStartTimeStr(timeStr);
-    }, [baseStart]);
+        const from = isEdit && initialEvent?.start ? new Date(initialEvent.start) : baseDate;
+        setStartTimeStr(format(from, "HH:mm"));
+    }, [baseDate, isEdit, initialEvent]);
 
-    useEffect(() => {
-        const trimmed = phone.trim();
-        if (!trimmed) {
-            setMatchedClient(null);
-            return;
+    const [patientQuery, setPatientQuery] = useState(
+        initialEvent?.patientName || ""
+    );
+    const [selectedClient, setSelectedClient] = useState(() => {
+        if (initialEvent?.clientId) {
+            return (
+                existingClients.find((c) => c.id === initialEvent.clientId) || null
+            );
         }
+        return null;
+    });
+    const [patientListOpen, setPatientListOpen] = useState(false);
+    const [showNewClientModal, setShowNewClientModal] = useState(false);
 
-        const existing =
-            existingClients.find((c) => c.phone === trimmed) || null;
-        setMatchedClient(existing);
+    const [localError, setLocalError] = useState("");
 
-        if (existing) {
-            setFullName(existing.fullName || "");
-        }
-    }, [phone, existingClients]);
+    const matchedClients = useMemo(() => {
+        const q = patientQuery.trim().toLowerCase();
+        if (!q) return existingClients;
+        return existingClients.filter((c) =>
+            (c.fullName || "")
+                .toString()
+                .toLowerCase()
+                .includes(q)
+        );
+    }, [existingClients, patientQuery]);
 
     if (!isOpen) return null;
 
-    const handlePhoneChange = (e) => {
-        let value = e.target.value;
+    const dayLabel = format(baseDate, "EEE d MMM", {locale: azLocale});
 
-        // разрешаем только + в начале и цифры
-        if (value.startsWith("+")) {
-            value = "+" + value.slice(1).replace(/\D/g, "");
-        } else {
-            value = value.replace(/\D/g, "");
-        }
+    const computeEndTimeStr = () => {
+        if (!startTimeStr || !durationMinutes) return "";
+        const [hourStr, minStr] = startTimeStr.split(":");
+        const start = new Date(
+            baseDate.getFullYear(),
+            baseDate.getMonth(),
+            baseDate.getDate(),
+            Number(hourStr) || 0,
+            Number(minStr) || 0,
+            0,
+            0
+        );
+        const end = new Date(start.getTime() + durationMinutes * 60000);
+        return format(end, "HH:mm");
+    };
 
-        setPhone(value);
+    const endTimeStr = computeEndTimeStr();
+
+    const handleStartTimeChange = (e) => {
+        setStartTimeStr(e.target.value);
+    };
+
+    const handleServiceSelect = (service) => {
+        setServiceId(service.id);
+        setServiceMenuOpen(false);
+    };
+
+    const handleClientSelect = (client) => {
+        setSelectedClient(client);
+        setPatientQuery(client.fullName || "");
+        setPatientListOpen(false);
+    };
+
+    const handleClientCreated = (client) => {
+        setSelectedClient(client);
+        setPatientQuery(client.fullName || "");
+        setShowNewClientModal(false);
+        setPatientListOpen(false);
     };
 
     const handleSubmit = (e) => {
         e.preventDefault();
         setLocalError("");
 
-        const name = fullName.trim();
-        const phoneTrimmed = phone.trim();
-
-        if (!phoneTrimmed) {
-            setLocalError("Mobil nömrə mütləqdir.");
+        if (!selectedService) {
+            setLocalError("Xidmət seçilməyib.");
             return;
         }
 
-        if (!matchedClient && !name) {
-            setLocalError("Pasiyent adı mütləqdir.");
+        if (!selectedClient) {
+            setLocalError("Pasiyent seçilməyib.");
             return;
         }
 
-        if (!startDateStr || !startTimeStr) {
-            setLocalError("Başlama tarixi və saatı mütləqdir.");
+        if (!startTimeStr) {
+            setLocalError("Başlama saatı göstərilməyib.");
             return;
         }
 
-        const [yearStr, monthStr, dayStr] = startDateStr.split("-");
         const [hourStr, minuteStr] = (startTimeStr || "").split(":");
-
-        const year = Number(yearStr);
-        const month = Number(monthStr);
-        const day = Number(dayStr);
         const hour = Number(hourStr);
         const minute = Number(minuteStr);
 
-        if (
-            Number.isNaN(year) ||
-            Number.isNaN(month) ||
-            Number.isNaN(day) ||
-            Number.isNaN(hour) ||
-            Number.isNaN(minute)
-        ) {
-            setLocalError("Başlama vaxtı düzgün deyil.");
+        if (Number.isNaN(hour) || Number.isNaN(minute)) {
+            setLocalError("Başlama saatı düzgün deyil.");
             return;
         }
 
-        const start = new Date(year, month - 1, day, hour, minute, 0, 0);
-        const end = new Date(start.getTime() + duration * 60000);
+        const start = new Date(
+            baseDate.getFullYear(),
+            baseDate.getMonth(),
+            baseDate.getDate(),
+            hour,
+            minute,
+            0,
+            0
+        );
 
-        const selectedService = services.find((s) => s.id === serviceId);
-
-        const finalClientId =
-            matchedClient?.id ?? initialEvent?.clientId ?? null;
-        const finalName = matchedClient?.fullName || name;
+        const end = new Date(start.getTime() + durationMinutes * 60000);
 
         const newId = isEdit ? initialEvent.id : Date.now();
 
@@ -133,121 +166,197 @@ export default function BookingModal({
             id: newId,
             type: initialEvent?.type || "booking",
             status: initialEvent?.status || "active",
-            serviceId,
-            serviceName: selectedService?.name || "",
-            clientId: finalClientId,
-            patientName: finalName,
-            phone: phoneTrimmed,
+            serviceId: selectedService.id,
+            serviceName: selectedService.name,
+            color: selectedService.color || null,
+            clientId: selectedClient.id || null,
+            patientName: selectedClient.fullName,
+            phone: selectedClient.phone || null,
             start,
             end,
-            durationMinutes: duration,
+            durationMinutes,
         };
 
         onSave && onSave(newEvent, mode);
     };
 
     return (
-        <div className={styles.backdrop}>
-            <div className={styles.modal}>
-                <div className={styles.header}>
-                    <h2>{isEdit ? "Randevunu dəyiş" : "Yeni randevu"}</h2>
-                    <button className={styles.closeBtn} onClick={onClose}>
-                        ✕
-                    </button>
-                </div>
+        <>
+            <div className={styles.backdrop}>
+                <div className={styles.modal}>
+                    <div className={styles.header}>
+                        <h2>{isEdit ? "Randevunu dəyiş" : "Yeni Randevu"}</h2>
+                        <button className={styles.closeBtn} onClick={onClose}>
+                            ✕
+                        </button>
+                    </div>
 
-                <form onSubmit={handleSubmit} className={styles.form}>
-                    <div className={styles.row}>
-                        <label>Pasiyent adı</label>
-                        <input
-                            type="text"
-                            value={fullName}
-                            onChange={(e) => setFullName(e.target.value)}
-                            placeholder="Ad Soyad"
-                            disabled={!!matchedClient}
-                        />
-                        {matchedClient && (
-                            <div className={styles.infoBox}>
-                                Bu nömrə üzrə pasiyent mövcuddur:{" "}
-                                <strong>{matchedClient.fullName}</strong>.
-                                Bu pasiyent istifadə olunacaq.
+                    <form onSubmit={handleSubmit} className={styles.form}>
+                        <div className={styles.row}>
+                            <div
+                                className={styles.serviceSelect}
+                                onClick={() => setServiceMenuOpen((p) => !p)}
+                            >
+                                <div className={styles.serviceLeft}>
+                  <span
+                      className={styles.serviceDot}
+                      style={{
+                          backgroundColor:
+                              selectedService?.color || "#4caf50",
+                          opacity: selectedService ? 1 : 0.4,
+                      }}
+                  />
+                                    <span
+                                        className={
+                                            selectedService
+                                                ? styles.serviceLabel
+                                                : styles.servicePlaceholder
+                                        }
+                                    >{selectedService ? selectedService.name : "Servis seçimi"}</span>
+                                </div>
+                                <span className={styles.serviceCaret}>▾</span>
                             </div>
-                        )}
-                    </div>
 
-                    <div className={styles.row}>
-                        <label>Mobil nömrə</label>
-                        <input
-                            type="tel"
-                            value={phone}
-                            onChange={handlePhoneChange}
-                            placeholder="+994..."
+                            {serviceMenuOpen && (
+                                <div className={styles.serviceDropdown}>
+                                    {services.map((s) => (
+                                        <button
+                                            key={s.id}
+                                            type="button"
+                                            className={styles.serviceOption}
+                                            onClick={() => handleServiceSelect(s)}
+                                        >
+                      <span className={styles.serviceLeft}>
+                        <span
+                            className={styles.serviceDot}
+                            style={{
+                                backgroundColor: s.color || "#4caf50",
+                            }}
                         />
-                    </div>
+                        <span className={styles.serviceLabel}>{s.name}</span>
+                      </span>
+                                            {s.durationMinutes || s.duration ? (
+                                                <span className={styles.serviceDuration}>
+                          {(s.durationMinutes || s.duration) + " dəq"}
+                        </span>
+                                            ) : null}
+                                        </button>
+                                    ))}
+                                </div>
+                            )}
 
-                    <div className={styles.row}>
-                        <label>Xidmət</label>
-                        <select
-                            value={serviceId}
-                            onChange={(e) => setServiceId(e.target.value)}
-                        >
-                            {services.map((s) => (
-                                <option key={s.id} value={s.id}>
-                                    {s.name}
-                                </option>
-                            ))}
-                        </select>
-                    </div>
-
-                    <div className={styles.row}>
-                        <label>Müddət</label>
-                        <select
-                            value={duration}
-                            onChange={(e) => setDuration(Number(e.target.value))}
-                        >
-                            <option value={15}>15 dəq</option>
-                            <option value={30}>30 dəq</option>
-                            <option value={60}>60 dəq</option>
-                        </select>
-                    </div>
-
-                    <div className={styles.row}>
-                        <label>Başlama vaxtı</label>
-                        <div className={styles.inlineFields}>
-                            <input
-                                type="date"
-                                value={startDateStr}
-                                onChange={(e) => setStartDateStr(e.target.value)}
-                            />
-                            <input
-                                type="time"
-                                step="900"
-                                value={startTimeStr}
-                                onChange={(e) => setStartTimeStr(e.target.value)}
-                            />
+                            {selectedService && (
+                                <div className={styles.serviceInfo}>
+                                    Müddət: {durationMinutes} dəq
+                                </div>
+                            )}
                         </div>
-                    </div>
 
-                    {(localError || errorMessage) && (
-                        <div className={styles.error}>
-                            {localError || errorMessage}
+                        <div className={styles.row}>
+                            <label className={styles.fieldLabel}>Tarix və saat</label>
+                            <div className={styles.timeRow}>
+                                <div className={styles.timeDate}>
+                                    <span className={styles.timeIcon}>🕒</span>
+                                    <span>{dayLabel}</span>
+                                </div>
+                                <div className={styles.timeInputs}>
+                                    <input
+                                        type="time"
+                                        step="900"
+                                        value={startTimeStr}
+                                        onChange={handleStartTimeChange}
+                                    />
+                                    <span className={styles.timeDash}>-</span>
+                                    <span className={styles.timeReadonly}>{endTimeStr}</span>
+                                </div>
+                            </div>
                         </div>
-                    )}
 
-                    <div className={styles.footer}>
-                        <button
-                            type="button"
-                            className={styles.secondaryBtn}
-                            onClick={onClose}
-                        >
-                            Ləğv et
-                        </button>
-                        <button type="submit" className={styles.primaryBtn}>
-                            {isEdit ? "Yadda saxla" : "Yarat"}
-                        </button>
-                    </div>
-                </form>
+                        <div className={styles.row}>
+                            <label className={styles.fieldLabel}>Pasiyent</label>
+                            <div
+                                className={`${styles.patientInputWrapper} ${
+                                    !selectedClient && localError ? styles.inputError : ""
+                                }`}
+                            >
+                                <span className={styles.patientIcon}>👤</span>
+                                <input
+                                    type="text"
+                                    value={patientQuery}
+                                    onChange={(e) => {
+                                        setPatientQuery(e.target.value);
+                                        setSelectedClient(null);
+                                        setPatientListOpen(true);
+                                    }}
+                                    onFocus={() => setPatientListOpen(true)}
+                                    placeholder="Pasiyent"
+                                />
+                            </div>
+
+                            {patientListOpen && (
+                                <div className={styles.patientDropdown}>
+                                    {matchedClients.map((c) => (
+                                        <button
+                                            key={c.id}
+                                            type="button"
+                                            className={styles.patientItem}
+                                            onClick={() => handleClientSelect(c)}
+                                        >
+                                            <div className={styles.patientAvatar}>
+                                                {(c.fullName || "?")
+                                                    .trim()
+                                                    .split(" ")
+                                                    .map((s) => s[0])
+                                                    .join("")
+                                                    .slice(0, 2)
+                                                    .toUpperCase()}
+                                            </div>
+                                            <div className={styles.patientInfo}>
+                                                <div className={styles.patientName}>{c.fullName}</div>
+                                                {c.phone && (
+                                                    <div className={styles.patientPhone}>{c.phone}</div>
+                                                )}
+                                            </div>
+                                        </button>
+                                    ))}
+
+                                    <button
+                                        type="button"
+                                        className={styles.newClientBtn}
+                                        onClick={() => setShowNewClientModal(true)}
+                                    >
+                                        + Yeni pasiyent yarat
+                                    </button>
+                                </div>
+                            )}
+                        </div>
+
+                        {(localError || errorMessage) && (
+                            <div className={styles.error}>{localError || errorMessage}</div>
+                        )}
+
+                        <div className={styles.footer}>
+                            <button
+                                type="button"
+                                className={styles.secondaryBtn}
+                                onClick={onClose}
+                            >
+                                Ləğv et
+                            </button>
+                            <button type="submit" className={styles.primaryBtn}>
+                                {isEdit ? "Yadda saxla" : "Yarat"}
+                            </button>
+                        </div>
+                    </form>
+                </div>
             </div>
-        </div>
+
+            <NewClientModal
+                isOpen={showNewClientModal}
+                existingClients={existingClients}
+                onClose={() => setShowNewClientModal(false)}
+                onCreate={handleClientCreated}
+            />
+        </>
     );
 }
