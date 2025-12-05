@@ -6,7 +6,8 @@ import { az } from "date-fns/locale";
 import { format, getDay, parse, startOfWeek } from "date-fns";
 import TimeSlotWrapper from "@/components/timeSlotWrapper/TimeSLotWrapper";
 import CalendarToolbar from "@/components/calendarToolbar/CalendarToolbar";
-import { SERVICES } from "@/config/services"
+import WeekHeaderCell from "@/components/weekHeaderCell/WeekHeaderCell";
+import MonthHeaderCell from "@/components/monthHeaderCell/MonthHeaderCell";
 
 const locales = { az };
 
@@ -25,12 +26,6 @@ const formats = {
         localizer.format(date, "dd MMM EEE"),
 };
 
-
-const serviceColorMap = SERVICES.reduce((acc, s) => {
-    acc[s.id] = s.color;
-    return acc;
-}, {});
-
 function eventStyleGetter(event) {
     let backgroundColor = "#1c274c";
     let opacity = 1;
@@ -38,10 +33,9 @@ function eventStyleGetter(event) {
     if (event.type === "block") {
         backgroundColor = "#9e9e9e";
     } else {
-        backgroundColor =
-            event.color ||
-            (event.serviceId && serviceColorMap[event.serviceId]) ||
-            "#1c274c";
+        if (event.durationMinutes === 15) backgroundColor = "#4caf50";
+        else if (event.durationMinutes === 30) backgroundColor = "#2196f3";
+        else if (event.durationMinutes === 60) backgroundColor = "#ff9800";
     }
 
     if (event.status === "cancelled") {
@@ -84,7 +78,12 @@ export default function CalendarWrapper({
                                             services = [],
                                             serviceFilter = "all",
                                             onServiceFilterChange,
+                                            servicesLoading,
+                                            selectedDate,
+                                            onSelectDate,
                                         }) {
+    const effectiveSelectedDate = selectedDate || date;
+
     return (
         <div className={styles.main}>
             <Calendar
@@ -98,7 +97,6 @@ export default function CalendarWrapper({
                 selectable
                 onSelectSlot={onSelectSlot}
                 onSelectEvent={onSelectEvent}
-                defaultDate={new Date()}
                 step={15}
                 timeslots={4}
                 views={["day", "week", "month", "agenda"]}
@@ -112,6 +110,23 @@ export default function CalendarWrapper({
                             onServiceFilterChange={onServiceFilterChange}
                         />
                     ),
+                    week: {
+                        header: (headerProps) => (
+                            <WeekHeaderCell
+                                {...headerProps}
+                                selectedDate={date}
+                                onSelectDate={(d) => {
+                                    onDateChange(d);
+                                    onViewChange("day");
+                                }}
+                            />
+                        ),
+                    },
+                    month: {
+                        header: (headerProps) => (
+                            <MonthHeaderCell {...headerProps} />
+                        ),
+                    },
                 }}
                 formats={formats}
                 min={new Date(2025, 0, 1, 7, 0)}

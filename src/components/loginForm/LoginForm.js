@@ -1,33 +1,28 @@
-"use client"
+"use client";
+
 import styles from "./loginForm.module.css";
-import {useState} from "react";
-import {useDispatch} from "react-redux";
-import {useRouter} from "next/navigation";
-import {loginSuccess} from "@/store/authSlice";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useLoginMutation } from "@/store/api/authApi";
 
 export default function LoginForm() {
-    const [email, setEmail] = useState("");
+    const [login, setLogin] = useState("");
     const [password, setPassword] = useState("");
-    const dispatch = useDispatch();
     const router = useRouter();
 
-    const handleSubmit = (event) => {
+    const [doLogin, { isLoading, error }] = useLoginMutation();
+
+    const handleSubmit = async (event) => {
         event.preventDefault();
 
-        const fakeUser = {
-            id: "1",
-            name: "Dr. " + (email || "Test"),
-            email: email || "test@doctor.az",
-        };
+        try {
+            const result = await doLogin({ login, password }).unwrap();
+            console.log("SimplyBook auth success:", result);
 
-        dispatch(
-            loginSuccess({
-                user: fakeUser,
-                token: "FAKE_TOKEN",
-            })
-        );
-
-        router.push("/dashboard");
+            router.push("/dashboard");
+        } catch (err) {
+            console.error("SimplyBook auth error:", err);
+        }
     };
 
     return (
@@ -36,10 +31,10 @@ export default function LoginForm() {
 
             <label>
                 <input
-                    type="email"
-                    placeholder="Email"
-                    value={email}
-                    onChange={e => setEmail(e.target.value)}
+                    type="text"
+                    placeholder="Login"
+                    value={login}
+                    onChange={(e) => setLogin(e.target.value)}
                     required
                 />
             </label>
@@ -49,15 +44,20 @@ export default function LoginForm() {
                     type="password"
                     placeholder="Password"
                     value={password}
-                    onChange={e => setPassword(e.target.value)}
+                    onChange={(e) => setPassword(e.target.value)}
                     required
                 />
             </label>
 
-
-            <button type="submit">
-                <span>Login</span>
+            <button type="submit" disabled={isLoading}>
+                <span>{isLoading ? "Loading..." : "Login"}</span>
             </button>
+
+            {error && (
+                <div style={{ color: "red", marginTop: 8 }}>
+                    Error. Check your login/password and try again.
+                </div>
+            )}
         </form>
-    )
+    );
 }

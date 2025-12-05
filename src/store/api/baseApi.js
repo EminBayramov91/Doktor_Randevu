@@ -9,10 +9,15 @@ export const baseApi = createApi({
             const state = getState();
             const token = state.auth?.token;
 
-            if (token) {
-                headers.set("Authorization", `Bearer ${token}`);
+            if (env.companyLogin) {
+                headers.set("X-Company-Login", env.companyLogin);
             }
 
+            if (token) {
+                headers.set("X-Token", token);
+            }
+
+            headers.set("Content-Type", "application/json");
             return headers;
         },
     }),

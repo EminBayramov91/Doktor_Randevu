@@ -1,39 +1,37 @@
 "use client";
 
-import { useState } from "react";
-import { format as formatDate } from "date-fns";
-import { az as azLocale } from "date-fns/locale";
+import { useEffect, useRef, useState } from "react";
 import styles from "./calendarToolbar.module.css";
 import Image from "next/image";
 
 export default function CalendarToolbar(props) {
     const {
+        label,
         date,
         onNavigate,
         view,
         onView,
         views,
-        services = [],
-        serviceFilter = "all",
-        onServiceFilterChange,
     } = props;
 
     const [showViews, setShowViews] = useState(false);
-    const [showServices, setShowServices] = useState(false);
 
-    const label = formatDate(date, "d MMMM yyyy", { locale: azLocale });
+    const viewDropdownRef = useRef(null);
 
-    const handlePrev = () => {
-        onNavigate("PREV");
-    };
+    useEffect(() => {
+        function handleClickOutside(e) {
+            const v = viewDropdownRef.current;
 
-    const handleNext = () => {
-        onNavigate("NEXT");
-    };
+            if (
+                v && !v.contains(e.target)
+            ) {
+                setShowViews(false);
+            }
+        }
 
-    const handleToday = () => {
-        onNavigate("TODAY");
-    };
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => document.removeEventListener("mousedown", handleClickOutside);
+    }, []);
 
     const viewLabels = {
         day: "Gün",
@@ -45,24 +43,26 @@ export default function CalendarToolbar(props) {
     const availableViews = views || ["day", "week", "month", "agenda"];
     const currentViewLabel = viewLabels[view] || view;
 
+    const handlePrev = () => onNavigate("PREV");
+    const handleNext = () => onNavigate("NEXT");
+    const handleToday = () => onNavigate("TODAY");
+
     const handleSelectView = (v) => {
         onView && onView(v);
         setShowViews(false);
     };
 
-    let currentServiceLabel = "Bütün xidmətlər";
-    if (serviceFilter !== "all") {
-        const found = services.find((s) => s.id === serviceFilter);
-        currentServiceLabel = found ? found.name : "Seçilmiş xidmət";
-    }
-
-    const handleSelectService = (id) => {
-        onServiceFilterChange && onServiceFilterChange(id);
-        setShowServices(false);
-    };
 
     return (
         <div className={styles.toolbar}>
+            <button
+                type="button"
+                className={styles.todayBtn}
+                onClick={handleToday}
+            >
+                Bu gün
+            </button>
+
             <div className={styles.center}>
                 <button
                     type="button"
@@ -78,8 +78,6 @@ export default function CalendarToolbar(props) {
                     />
                 </button>
 
-                <div className={styles.datePill}>{label}</div>
-
                 <button
                     type="button"
                     className={styles.arrowBtn}
@@ -94,23 +92,17 @@ export default function CalendarToolbar(props) {
                     />
                 </button>
 
-                <button
-                    type="button"
-                    className={styles.todayBtn}
-                    onClick={handleToday}
-                >
-                    Bu gün
-                </button>
+                <div className={styles.datePill}>{label}</div>
+
             </div>
 
             <div className={styles.right}>
-                <div className={styles.viewDropdown}>
+                <div className={styles.viewDropdown} ref={viewDropdownRef}>
                     <button
                         type="button"
                         className={styles.viewToggle}
                         onClick={() => {
                             setShowViews((prev) => !prev);
-                            setShowServices(false);
                         }}
                     >
                         {currentViewLabel}
@@ -131,51 +123,6 @@ export default function CalendarToolbar(props) {
                                     onClick={() => handleSelectView(v)}
                                 >
                                     {viewLabels[v] || v}
-                                </button>
-                            ))}
-                        </div>
-                    )}
-                </div>
-
-                <div className={styles.serviceDropdown}>
-                    <button
-                        type="button"
-                        className={styles.viewToggle}
-                        onClick={() => {
-                            setShowServices((prev) => !prev);
-                            setShowViews(false);
-                        }}
-                    >
-                        {currentServiceLabel}
-                        <span className={styles.caret}>▾</span>
-                    </button>
-
-                    {showServices && (
-                        <div className={styles.viewMenu}>
-                            <button
-                                type="button"
-                                className={
-                                    serviceFilter === "all"
-                                        ? `${styles.viewItem} ${styles.viewItemActive}`
-                                        : styles.viewItem
-                                }
-                                onClick={() => handleSelectService("all")}
-                            >
-                                Bütün xidmətlər
-                            </button>
-
-                            {services.map((s) => (
-                                <button
-                                    key={s.id}
-                                    type="button"
-                                    className={
-                                        serviceFilter === s.id
-                                            ? `${styles.viewItem} ${styles.viewItemActive}`
-                                            : styles.viewItem
-                                    }
-                                    onClick={() => handleSelectService(s.id)}
-                                >
-                                    {s.name}
                                 </button>
                             ))}
                         </div>
