@@ -66,7 +66,6 @@ export default function BookingModal({
     const handlePhoneChange = (e) => {
         let value = e.target.value;
 
-        // разрешаем только + в начале и цифры
         if (value.startsWith("+")) {
             value = "+" + value.slice(1).replace(/\D/g, "");
         } else {

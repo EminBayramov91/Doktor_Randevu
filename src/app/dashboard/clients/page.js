@@ -1,9 +1,10 @@
-import ClientsPageClient from "@/components/clientsPageClient/ClientsPageClient";
-
+import styles from "./page.module.css"
 export const metadata = {
     title: "Müştəri siyahısı",
 };
 
 export default function Page() {
-    return <ClientsPageClient />;
+    return (
+        <div>Client</div>
+    )
 }

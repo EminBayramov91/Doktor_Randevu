@@ -1,18 +1,30 @@
 .toolbar {
     display: flex;
     align-items: center;
-    justify-content: center;
     padding: 8px 16px;
     border-bottom: 1px solid #e5e5e5;
-    position: relative;
-    gap: 16px;
+    background: #fafafa;
+    gap: 12px;
+}
+
+.todayBtn {
+    border-radius: 999px;
+    border: 1px solid #d0d0d0;
+    background: #f7f7f7;
+    color: #000;
+    padding: 6px 16px;
+    font-size: 13px;
+    cursor: pointer;
+}
+
+.todayBtn:hover {
+    background: #eaeaea;
 }
 
 .center {
     display: flex;
     align-items: center;
     gap: 8px;
-    position: relative;
 }
 
 .arrowBtn {
@@ -22,7 +34,6 @@
     border: none;
     background: #f2f2f2;
     cursor: pointer;
-    font-size: 16px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -34,143 +45,9 @@
 }
 
 .datePill {
-    border-radius: 999px;
-    border: none;
-    padding: 6px 16px;
-    background: #f5f5f5;
-    cursor: pointer;
-    font-size: 14px;
-    font-weight: 500;
-}
-
-.datePill:hover {
-    background: #eaeaea;
-}
-
-.todayBtn {
-    margin-left: auto;
-    border: none;
-    background: none;
-    cursor: pointer;
-    font-size: 14px;
-    color: #666;
-}
-
-.todayBtn:hover {
-    color: #000;
-}
-
-.pickerPopover {
-    position: absolute;
-    top: 40px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: #fff;
-    padding: 12px;
-    border-radius: 12px;
-    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.12);
-    z-index: 20;
-}
-
-.dateInput {
-    font-size: 14px;
-    padding: 6px 8px;
-}
-
-.toolbar {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 8px 16px;
-    border-bottom: 1px solid #e5e5e5;
-    position: relative;
-    gap: 16px;
-}
-
-.center {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    position: relative;
-}
-
-.arrowBtn {
-    width: 32px;
-    height: 32px;
-    border-radius: 999px;
-    border: none;
-    background: #f2f2f2;
-    cursor: pointer;
     font-size: 16px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0;
-}
-
-.arrowBtn:hover {
-    background: #e5e5e5;
-}
-
-.datePill {
-    border-radius: 999px;
-    border: none;
-    padding: 6px 16px;
-    background: #f5f5f5;
-    cursor: pointer;
-    font-size: 14px;
     font-weight: 500;
 }
-
-.datePill:hover {
-    background: #eaeaea;
-}
-
-.todayBtn {
-    margin: 0;
-    border: none;
-    background: none;
-    cursor: pointer;
-    font-size: 14px;
-    color: #666;
-}
-
-.todayBtn:hover {
-    color: #000;
-}
-
-.pickerPopover {
-    position: absolute;
-    top: 40px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: #fff;
-    padding: 12px;
-    border-radius: 16px;
-    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.15);
-    z-index: 1000;
-    min-width: 260px;
-}
-
-.toolbar {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 8px 16px;
-    border-bottom: 1px solid #e5e5e5;
-    position: relative;
-    gap: 16px;
-}
-
-.center {
-    margin-left: auto;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    position: relative;
-}
-
-
 .right {
     margin-left: auto;
     display: flex;
@@ -178,27 +55,24 @@
     gap: 8px;
 }
 
-
-.viewDropdown {
+.viewDropdown{
     position: relative;
 }
 
-.viewToggle,
-.todayBtn {
-    border-radius: 6px;
+.viewToggle {
+    border-radius: 999px;
     border: 1px solid #d0d0d0;
     background: #f7f7f7;
-    color: #000000;
-    padding: 4px 10px;
-    font-size: 12px;
+    color: #000;
+    padding: 6px 14px;
+    font-size: 13px;
     cursor: pointer;
     display: flex;
     align-items: center;
     gap: 4px;
 }
 
-.viewToggle:hover,
-.todayBtn:hover {
+.viewToggle:hover {
     background: #eaeaea;
 }
 
@@ -215,7 +89,7 @@
     box-shadow: 0 4px 18px rgba(0, 0, 0, 0.15);
     padding: 4px 0;
     z-index: 101;
-    min-width: 110px;
+    min-width: 120px;
 }
 
 .viewItem {
@@ -224,7 +98,7 @@
     border: none;
     background: none;
     padding: 6px 10px;
-    font-size: 12px;
+    font-size: 13px;
     cursor: pointer;
 }
 
@@ -237,8 +111,3 @@
     background: #1c274c;
     color: #fff;
 }
-
-.serviceDropdown {
-    position: relative;
-}
-

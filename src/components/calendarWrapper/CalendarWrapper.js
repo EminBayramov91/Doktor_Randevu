@@ -6,6 +6,8 @@ import { az } from "date-fns/locale";
 import { format, getDay, parse, startOfWeek } from "date-fns";
 import TimeSlotWrapper from "@/components/timeSlotWrapper/TimeSLotWrapper";
 import CalendarToolbar from "@/components/calendarToolbar/CalendarToolbar";
+import WeekHeaderCell from "@/components/weekHeaderCell/WeekHeaderCell";
+import MonthHeaderCell from "@/components/monthHeaderCell/MonthHeaderCell";
 
 const locales = { az };
 
@@ -23,7 +25,6 @@ const formats = {
     dayFormat: (date, culture, localizer) =>
         localizer.format(date, "dd MMM EEE"),
 };
-
 
 function eventStyleGetter(event) {
     let backgroundColor = "#1c274c";
@@ -77,7 +78,12 @@ export default function CalendarWrapper({
                                             services = [],
                                             serviceFilter = "all",
                                             onServiceFilterChange,
+                                            servicesLoading,
+                                            selectedDate,
+                                            onSelectDate,
                                         }) {
+    const effectiveSelectedDate = selectedDate || date;
+
     return (
         <div className={styles.main}>
             <Calendar
@@ -91,7 +97,6 @@ export default function CalendarWrapper({
                 selectable
                 onSelectSlot={onSelectSlot}
                 onSelectEvent={onSelectEvent}
-                defaultDate={new Date()}
                 step={15}
                 timeslots={4}
                 views={["day", "week", "month", "agenda"]}
@@ -105,6 +110,23 @@ export default function CalendarWrapper({
                             onServiceFilterChange={onServiceFilterChange}
                         />
                     ),
+                    week: {
+                        header: (headerProps) => (
+                            <WeekHeaderCell
+                                {...headerProps}
+                                selectedDate={date}
+                                onSelectDate={(d) => {
+                                    onDateChange(d);
+                                    onViewChange("day");
+                                }}
+                            />
+                        ),
+                    },
+                    month: {
+                        header: (headerProps) => (
+                            <MonthHeaderCell {...headerProps} />
+                        ),
+                    },
                 }}
                 formats={formats}
                 min={new Date(2025, 0, 1, 7, 0)}
